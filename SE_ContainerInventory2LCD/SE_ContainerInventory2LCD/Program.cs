@@ -1,7 +1,9 @@
 ﻿using Sandbox.ModAPI.Ingame;
+using System.Linq;
 using VRage.Game.ModAPI.Ingame;
 using VRage.Network;
 using VRage.ObjectBuilders;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace SE_ContainerInventory2LCD
 {
@@ -11,13 +13,18 @@ namespace SE_ContainerInventory2LCD
     /// </summary>
     public sealed class Program : MyGridProgram
     {
-        const int INITAL_VALUE = 0;
+        private const int INITAL_VALUE = 0;
+
+        private const string LEGACY_TYPE_PREFIX = "MyObjectBuilder_";
+        private const string LCD_AVAILABLE_ITEMS_SUFFIX = "[available]";
+        private const string LCD_UNAVAILABLE_ITEMS_SUFFIX = "[out]";
 
         #region Variables
 
         private List<IMyTerminalBlock> _terminalConnectedInventories = new List<IMyTerminalBlock>();
+        private List<IMyTerminalBlock> _terminalConnectedLCDs = new List<IMyTerminalBlock>();
 
-        private Dictionary<string, double> _currentAvailableItems = new Dictionary<string, double>()
+        private Dictionary<string, double> _currentItems = new Dictionary<string, double>()
         {
             { ComponentItem.BulletproofGlass.SubtypeId, INITAL_VALUE },
             { ComponentItem.Computer.SubtypeId, INITAL_VALUE },
@@ -47,10 +54,28 @@ namespace SE_ContainerInventory2LCD
 
         private void ResetAvailableItemCount()
         {
-            foreach (string key in _currentAvailableItems.Keys.ToList())
+            foreach (string key in _currentItems.Keys.ToList())
             {
-                _currentAvailableItems[key] = INITAL_VALUE;
+                _currentItems[key] = INITAL_VALUE;
             }
+        }
+
+        private string FormatAmount(double value)
+        {
+            string unit = "";
+
+            if (value >= 1000000)
+            {
+                unit = "M";
+                value /= 1000000;
+            }
+            else if (value >= 1000)
+            {
+                unit = "k";
+                value /= 1000;
+            }
+
+            return "" + (int)value + unit;
         }
 
         #endregion
@@ -78,11 +103,12 @@ namespace SE_ContainerInventory2LCD
         /// <param name="updateSource"></param>
         public void Main(string args, UpdateType updateSource)
         {
-            FetchAvailableInventories();
+            FetchConnectedInventories();
+            FetchConnectedLCDs();
 
             UpdateAvailableItems();
 
-            // TODO initialize all LCD panels
+            PrintToLCD();
         }
 
         #endregion
@@ -92,11 +118,21 @@ namespace SE_ContainerInventory2LCD
         /// <summary>
         /// Fetch all blocks which are currently connected with the terminal block and own itself an inventory.
         /// </summary>
-        public void FetchAvailableInventories()
+        public void FetchConnectedInventories()
         {
             _terminalConnectedInventories.Clear();
 
-            GridTerminalSystem.GetBlocksOfType(_terminalConnectedInventories, x => x.HasInventory);
+            GridTerminalSystem.GetBlocksOfType<IMyTerminalBlock>(_terminalConnectedInventories, x => x.HasInventory);
+        }
+
+        /// <summary>
+        /// Fetch all blocks of <see cref="IMyTextPanel"/> type (Text Panel, LCD, Wide LCD).
+        /// </summary>
+        public void FetchConnectedLCDs()
+        {
+            _terminalConnectedLCDs.Clear();
+
+            GridTerminalSystem.GetBlocksOfType<IMyTerminalBlock>(_terminalConnectedLCDs, x => x is IMyTextPanel);
         }
 
         /// <summary>
@@ -122,13 +158,71 @@ namespace SE_ContainerInventory2LCD
                 {
                     if (item.Type.TypeId == ComponentItem.TypeId)
                     {
-                        itemKey = item.Type.SubtypeId; // e. g. "BulletproofGlass"
+                        itemKey = item.Type.SubtypeId;
+
                         itemAmount = (double)item.Amount.RawValue / 1000000d;
 
-                        if (_currentAvailableItems.ContainsKey(itemKey))
+                        if (_currentItems.ContainsKey(itemKey))
                         {
-                            _currentAvailableItems[itemKey] = itemAmount;
+                            _currentItems[itemKey] += itemAmount;
                         }
+                    }
+                }
+
+                items.Clear();
+            }
+        }
+
+        /// <summary>
+        /// Prints items to LCDs.
+        /// </summary>
+        public void PrintToLCD()
+        {
+            if (_terminalConnectedLCDs.Count > 0)
+            {
+                IMyTextPanel panel;
+                IMyTextSurface textSurface;
+
+                IOrderedEnumerable<KeyValuePair<string, double>> sortedDict = from entry in _currentItems orderby entry.Value descending select entry;
+                IEnumerable<KeyValuePair<string, double>> availableItems = sortedDict.Where(x => x.Value > 0);
+                IEnumerable<KeyValuePair<string, double>> unavailableItems = sortedDict.Where(x => x.Value == 0);
+
+                string text = "";
+
+                foreach (IMyTerminalBlock terminalConnectedLCD in _terminalConnectedLCDs)
+                {
+                    panel = (IMyTextPanel)terminalConnectedLCD;
+
+                    textSurface = (IMyTextSurface)terminalConnectedLCD;
+
+                    //Available
+                    if (panel.CustomName.EndsWith(LCD_AVAILABLE_ITEMS_SUFFIX))
+                    {
+                        textSurface.ContentType = VRage.Game.GUI.TextPanel.ContentType.TEXT_AND_IMAGE;
+
+                        foreach (var item in availableItems)
+                        {
+                            text += item.Key + " " + FormatAmount(item.Value) + "\r\n";
+                        }
+
+                        textSurface.WriteText(text);
+
+                        text = "";
+                    }
+
+                    // Unavailable
+                    if (panel.CustomName.EndsWith(LCD_UNAVAILABLE_ITEMS_SUFFIX))
+                    {
+                        textSurface.ContentType = VRage.Game.GUI.TextPanel.ContentType.TEXT_AND_IMAGE;
+
+                        foreach (var item in unavailableItems)
+                        {
+                            text += item.Key + " " + FormatAmount(item.Value) + "\r\n";
+                        }
+
+                        textSurface.WriteText(text);
+
+                        text = "";
                     }
                 }
             }
@@ -144,7 +238,7 @@ namespace SE_ContainerInventory2LCD
             /// <summary>
             /// Prefix when using MyInventoryItem.Type.TypeId
             /// </summary>
-            public const string TypeId = MyObjectBuilderType.LEGACY_TYPE_PREFIX + "Component";
+            public const string TypeId = LEGACY_TYPE_PREFIX + "Component";
 
             public static Item BulletproofGlass             = new Item() { SubtypeId = "BulletproofGlass",              DisplayName = "Bulletproof Glass" };
             public static Item Computer                     = new Item() { SubtypeId = "Computer",                      DisplayName = "Computer" };
