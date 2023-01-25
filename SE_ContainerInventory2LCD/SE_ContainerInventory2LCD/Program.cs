@@ -28,24 +28,24 @@ namespace SE_ContainerInventory2LCD
         {
             { ComponentItem.BulletproofGlass.SubtypeId, INITAL_VALUE },
             { ComponentItem.Computer.SubtypeId, INITAL_VALUE },
-            { ComponentItem.ConstructioonComponent.SubtypeId, INITAL_VALUE },
-            { ComponentItem.DetectorComponent.SubtypeId, INITAL_VALUE },
+            { ComponentItem.Construction.SubtypeId, INITAL_VALUE },
+            { ComponentItem.Detector.SubtypeId, INITAL_VALUE },
             { ComponentItem.Display.SubtypeId, INITAL_VALUE },
             { ComponentItem.Explosives.SubtypeId, INITAL_VALUE },
             { ComponentItem.Girder.SubtypeId, INITAL_VALUE },
-            { ComponentItem.GravityComponent.SubtypeId, INITAL_VALUE },
+            { ComponentItem.Gravity.SubtypeId, INITAL_VALUE },
             { ComponentItem.InteriorPlate.SubtypeId, INITAL_VALUE },
-            { ComponentItem.MedicalComponents.SubtypeId, INITAL_VALUE },
+            { ComponentItem.Medical.SubtypeId, INITAL_VALUE },
             { ComponentItem.MetalGrid.SubtypeId, INITAL_VALUE },
             { ComponentItem.Motor.SubtypeId, INITAL_VALUE },
             { ComponentItem.PowerCell.SubtypeId, INITAL_VALUE },
-            { ComponentItem.RadioCommunicationComponent.SubtypeId, INITAL_VALUE },
-            { ComponentItem.ReactorComponents.SubtypeId, INITAL_VALUE },
+            { ComponentItem.RadioCommunication.SubtypeId, INITAL_VALUE },
+            { ComponentItem.Reactor.SubtypeId, INITAL_VALUE },
             { ComponentItem.SolarCell.SubtypeId, INITAL_VALUE },
             { ComponentItem.SteelPlate.SubtypeId, INITAL_VALUE },
             { ComponentItem.SteelTubeLarge.SubtypeId, INITAL_VALUE },
             { ComponentItem.SteelTubeSmall.SubtypeId, INITAL_VALUE },
-            { ComponentItem.ThrusterComponents.SubtypeId, INITAL_VALUE },
+            { ComponentItem.Thruster.SubtypeId, INITAL_VALUE },
         };
 
         #endregion
@@ -240,26 +240,27 @@ namespace SE_ContainerInventory2LCD
             /// </summary>
             public const string TypeId = LEGACY_TYPE_PREFIX + "Component";
 
-            public static Item BulletproofGlass             = new Item() { SubtypeId = "BulletproofGlass",              DisplayName = "Bulletproof Glass" };
-            public static Item Computer                     = new Item() { SubtypeId = "Computer",                      DisplayName = "Computer" };
-            public static Item ConstructioonComponent       = new Item() { SubtypeId = "ConstructioonComponent",        DisplayName = "Construction Component" };
-            public static Item DetectorComponent            = new Item() { SubtypeId = "DetectorComponent",             DisplayName = "Detector Component" };
-            public static Item Display                      = new Item() { SubtypeId = "Display",                       DisplayName = "Display" };
-            public static Item Explosives                   = new Item() { SubtypeId = "Explosives",                    DisplayName = "Explosives" };
-            public static Item Girder                       = new Item() { SubtypeId = "Girder",                        DisplayName = "Girder" };
-            public static Item GravityComponent             = new Item() { SubtypeId = "GravityComponent",              DisplayName = "Gravity Component" };
-            public static Item InteriorPlate                = new Item() { SubtypeId = "InteriorPlate",                 DisplayName = "Interior Plate" };
-            public static Item MedicalComponents            = new Item() { SubtypeId = "MedicalComponents",             DisplayName = "Medical Components" };
-            public static Item MetalGrid                    = new Item() { SubtypeId = "MetalGrid",                     DisplayName = "Metal Grid" };
-            public static Item Motor                        = new Item() { SubtypeId = "Motor",                         DisplayName = "Motor" };
-            public static Item PowerCell                    = new Item() { SubtypeId = "PowerCell",                     DisplayName = "Power Cell" };
-            public static Item RadioCommunicationComponent  = new Item() { SubtypeId = "RadioCommunicationComponent",   DisplayName = "Radio Communication Component" };
-            public static Item ReactorComponents            = new Item() { SubtypeId = "ReactorComponents",             DisplayName = "Reactor Components" };
-            public static Item SolarCell                    = new Item() { SubtypeId = "SolarCell",                     DisplayName = "Solar Cell" };
-            public static Item SteelPlate                   = new Item() { SubtypeId = "SteelPlate",                    DisplayName = "Steel Plate" };
-            public static Item SteelTubeLarge               = new Item() { SubtypeId = "SteelTubeLarge",                DisplayName = "Steel Tube Large" };
-            public static Item SteelTubeSmall               = new Item() { SubtypeId = "SteelTubeSmall",                DisplayName = "Steel Tube Small" };
-            public static Item ThrusterComponents           = new Item() { SubtypeId = "ThrusterComponents",            DisplayName = "Thruster Components" };
+            public static Item BulletproofGlass     = new Item() { SubtypeId = "BulletproofGlass", DisplayName = "Bulletproof Glass" };
+            public static Item Computer             = new Item() { SubtypeId = "Computer", DisplayName = "Computer" };
+            public static Item Construction         = new Item() { SubtypeId = "Construction", DisplayName = "Construction" };
+            public static Item Detector             = new Item() { SubtypeId = "Detector", DisplayName = "Detector" };
+            public static Item Display              = new Item() { SubtypeId = "Display", DisplayName = "Display" };
+            public static Item Explosives           = new Item() { SubtypeId = "Explosives", DisplayName = "Explosives" };
+            public static Item Girder               = new Item() { SubtypeId = "Girder", DisplayName = "Girder" };
+            public static Item Gravity              = new Item() { SubtypeId = "Gravity", DisplayName = "Gravity" };
+            public static Item InteriorPlate        = new Item() { SubtypeId = "InteriorPlate", DisplayName = "Interior Plate" };
+            public static Item Medical              = new Item() { SubtypeId = "Medical", DisplayName = "Medical" };
+            public static Item MetalGrid            = new Item() { SubtypeId = "MetalGrid", DisplayName = "Metal Grid" };
+            public static Item Motor                = new Item() { SubtypeId = "Motor", DisplayName = "Motor" };
+            public static Item PowerCell            = new Item() { SubtypeId = "PowerCell", DisplayName = "Power Cell" };
+            public static Item RadioCommunication   = new Item() { SubtypeId = "RadioCommunication", DisplayName = "Radio Communication" };
+            public static Item Reactor              = new Item() { SubtypeId = "Reactor", DisplayName = "Reactor" };
+            public static Item SolarCell            = new Item() { SubtypeId = "SolarCell", DisplayName = "Solar Cell" };
+            public static Item SteelPlate           = new Item() { SubtypeId = "SteelPlate", DisplayName = "Steel Plate" };
+            public static Item SteelTubeLarge       = new Item() { SubtypeId = "LargeTube", DisplayName = "Large Tube" };
+            public static Item SteelTubeSmall       = new Item() { SubtypeId = "SmallTube", DisplayName = "Small Tube" };
+            public static Item Thruster             = new Item() { SubtypeId = "Thrust", DisplayName = "Thruster" };
+            public static Item SuperConductor       = new Item() { SubtypeId = "Superconductor", DisplayName = "Super Conductor" };
         }
 
         public class Item
